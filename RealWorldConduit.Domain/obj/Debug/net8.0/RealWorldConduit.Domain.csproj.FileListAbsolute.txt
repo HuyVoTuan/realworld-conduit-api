@@ -1,0 +1,11 @@
+E:\ASP.NET Core\RealWorldConduit\RealWorldConduit.Domain\bin\Debug\net8.0\RealWorldConduit.Domain.deps.json
+E:\ASP.NET Core\RealWorldConduit\RealWorldConduit.Domain\bin\Debug\net8.0\RealWorldConduit.Domain.dll
+E:\ASP.NET Core\RealWorldConduit\RealWorldConduit.Domain\bin\Debug\net8.0\RealWorldConduit.Domain.pdb
+E:\ASP.NET Core\RealWorldConduit\RealWorldConduit.Domain\obj\Debug\net8.0\RealWorldConduit.Domain.GeneratedMSBuildEditorConfig.editorconfig
+E:\ASP.NET Core\RealWorldConduit\RealWorldConduit.Domain\obj\Debug\net8.0\RealWorldConduit.Domain.AssemblyInfoInputs.cache
+E:\ASP.NET Core\RealWorldConduit\RealWorldConduit.Domain\obj\Debug\net8.0\RealWorldConduit.Domain.AssemblyInfo.cs
+E:\ASP.NET Core\RealWorldConduit\RealWorldConduit.Domain\obj\Debug\net8.0\RealWorldConduit.Domain.csproj.CoreCompileInputs.cache
+E:\ASP.NET Core\RealWorldConduit\RealWorldConduit.Domain\obj\Debug\net8.0\RealWorldConduit.Domain.dll
+E:\ASP.NET Core\RealWorldConduit\RealWorldConduit.Domain\obj\Debug\net8.0\refint\RealWorldConduit.Domain.dll
+E:\ASP.NET Core\RealWorldConduit\RealWorldConduit.Domain\obj\Debug\net8.0\RealWorldConduit.Domain.pdb
+E:\ASP.NET Core\RealWorldConduit\RealWorldConduit.Domain\obj\Debug\net8.0\ref\RealWorldConduit.Domain.dll
