@@ -1,4 +1,6 @@
-using RealWorldCondui.Infrastructure.Middlewares;
+using RealworldConduit.Infrastructure.Extensions;
+using RealWorldConduit.Infrastructure.Extensions;
+using RealWorldConduit.Infrastructure.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,9 +11,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHttpClient();
+
+// Dependency Injection
+builder.Services.MediatRConfiguration()
+                .AuthConfiguration(builder.Configuration)              
+                .DatabaseConfiguration(builder.Configuration);
+
+
 var app = builder.Build();
 
-// Middleware usage
+//Middleware usage
 app.UseMiddleware<RestExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
@@ -23,6 +33,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

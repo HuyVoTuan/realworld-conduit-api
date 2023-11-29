@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conduit.API", "Conduit.API.csproj", "{A6ABDE69-C841-4B8D-83B0-B931EEA5BD73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Conduit.API", "Conduit.API.csproj", "{A6ABDE69-C841-4B8D-83B0-B931EEA5BD73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealWorldConduit.Domain", "..\RealWorldConduit.Domain\RealWorldConduit.Domain.csproj", "{0B39F89A-CF50-4BE9-934D-9CB46C08CFA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RealWorldConduit.Domain", "..\RealWorldConduit.Domain\RealWorldConduit.Domain.csproj", "{0B39F89A-CF50-4BE9-934D-9CB46C08CFA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealWorldCondui.Application", "..\RealWorldCondui.Application\RealWorldCondui.Application.csproj", "{E4BBF6F4-4C28-4D64-89DD-4018B1052784}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealworldConduit.Infrastructure", "..\RealworldConduit.Infrastructure\RealworldConduit.Infrastructure.csproj", "{B480AF79-ACB1-4063-BEFE-E73E897FF319}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealWorldCondui.Infrastructure", "..\RealWorldCondui.Infrastructure\RealWorldCondui.Infrastructure.csproj", "{E57FD390-0F70-4DFA-96C7-B3F2DFBFC3E5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealWorldConduit.Application", "..\RealWorldConduit.Application\RealWorldConduit.Application.csproj", "{89CAFBEB-F68B-4394-93BC-692141542586}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +25,14 @@ Global
 		{0B39F89A-CF50-4BE9-934D-9CB46C08CFA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B39F89A-CF50-4BE9-934D-9CB46C08CFA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B39F89A-CF50-4BE9-934D-9CB46C08CFA4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E4BBF6F4-4C28-4D64-89DD-4018B1052784}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E4BBF6F4-4C28-4D64-89DD-4018B1052784}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E4BBF6F4-4C28-4D64-89DD-4018B1052784}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E4BBF6F4-4C28-4D64-89DD-4018B1052784}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E57FD390-0F70-4DFA-96C7-B3F2DFBFC3E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E57FD390-0F70-4DFA-96C7-B3F2DFBFC3E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E57FD390-0F70-4DFA-96C7-B3F2DFBFC3E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E57FD390-0F70-4DFA-96C7-B3F2DFBFC3E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B480AF79-ACB1-4063-BEFE-E73E897FF319}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B480AF79-ACB1-4063-BEFE-E73E897FF319}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B480AF79-ACB1-4063-BEFE-E73E897FF319}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B480AF79-ACB1-4063-BEFE-E73E897FF319}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89CAFBEB-F68B-4394-93BC-692141542586}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89CAFBEB-F68B-4394-93BC-692141542586}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89CAFBEB-F68B-4394-93BC-692141542586}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89CAFBEB-F68B-4394-93BC-692141542586}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

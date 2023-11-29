@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using RealWorldConduit.Application.Users.Queries;
 
 namespace Conduit.API.Controllers
 {
@@ -6,14 +8,17 @@ namespace Conduit.API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        [HttpPost]
-        public async Task<IActionResult> Get([FromBody] string a)
+        private readonly IMediator _mediator;
+
+        public UserController(IMediator mediator)
         {
-            if (a == "a")
-            {
-                throw new Exception();
-            }
-            return Ok();
+            _mediator = mediator;
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var currentUser = await _mediator.Send(new GetCurrentUserQuery());
+            return Ok(currentUser);
         }
     }
 }
