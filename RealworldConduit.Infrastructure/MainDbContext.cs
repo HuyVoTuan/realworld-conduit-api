@@ -13,6 +13,8 @@ namespace RealWorldConduit.Infrastructure
         public DbSet<BlogTag> BlogsTag { get; set; }
         public DbSet<UserFollower> Followers { get; set; }
         public DbSet<FavoriteBlog> FavoriteBlogs { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+
 
         public MainDbContext(DbContextOptions<MainDbContext> options) : base(options)
         {
@@ -23,7 +25,6 @@ namespace RealWorldConduit.Infrastructure
             modelBuilder.HasPostgresExtension("uuid-ossp");
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(MainDbContext).Assembly);
 
-            base.OnModelCreating(modelBuilder);
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken)
@@ -35,7 +36,7 @@ namespace RealWorldConduit.Infrastructure
         private void UpdateAuditInfo()
         {
             var entities = ChangeTracker.Entries()
-                                        .Where(e => e is IAuditEntity && (e.State == EntityState.Modified || e.State == EntityState.Added));
+                                        .Where(e => e.Entity is IAuditEntity && (e.State == EntityState.Modified || e.State == EntityState.Added));
 
             foreach (var entity in entities)
             {

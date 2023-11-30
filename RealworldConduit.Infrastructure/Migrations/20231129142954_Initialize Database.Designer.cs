@@ -12,7 +12,7 @@ using RealWorldConduit.Infrastructure;
 namespace RealworldConduit.Infrastructure.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    [Migration("20231129055955_Initialize Database")]
+    [Migration("20231129142954_Initialize Database")]
     partial class InitializeDatabase
     {
         /// <inheritdoc />

@@ -1,23 +1,18 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using RealworldConduit.Infrastructure.Common;
-using RealWorldConduit.Domain.Entities;
+using RealWorldConduit.Application.Users.DTOs;
 using RealWorldConduit.Infrastructure;
 using RealWorldConduit.Infrastructure.Auth;
 using RealWorldConduit.Infrastructure.Common;
 using System.Net;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RealWorldConduit.Application.Users.Queries
 {
-    public class GetCurrentUserQuery : IRequestWithBaseResponse<User>
+    public class GetCurrentUserQuery : IRequestWithBaseResponse<UserDTO>
     {
 
     }
-    public class GetCurrentUserQueryHandler : IRequestWithBaseResponseHandler<GetCurrentUserQuery, User>
+    internal class GetCurrentUserQueryHandler : IRequestWithBaseResponseHandler<GetCurrentUserQuery, UserDTO>
     {
         private readonly MainDbContext _dbContext;
         private readonly ICurrentUser _currentUser;
@@ -27,7 +22,7 @@ namespace RealWorldConduit.Application.Users.Queries
             _dbContext = dbContext;
             _currentUser = currentUser;
         }
-        public async Task<BaseResponse<User>> Handle(GetCurrentUserQuery request, CancellationToken cancellationToken)
+        public async Task<BaseResponse<UserDTO>> Handle(GetCurrentUserQuery request, CancellationToken cancellationToken)
         {
             var currentUser = await _dbContext.Users.Where(u => u.Id == _currentUser.Id)
                                               .FirstOrDefaultAsync();
@@ -37,10 +32,17 @@ namespace RealWorldConduit.Application.Users.Queries
                 throw new RestException(HttpStatusCode.NotFound, "User Not Found");
             }
 
-            return new BaseResponse<User> {
+            return new BaseResponse<UserDTO>
+            {
                 Code = HttpStatusCode.OK,
-                Message = "Successfully get current user",
-                Data = currentUser
+                Message = $"Successfully get current {currentUser.Email} user",
+                Data = new UserDTO
+                {
+                    Username = currentUser.Username,
+                    Email = currentUser.Email,
+                    ProfileImage = currentUser.ProfileImage,
+                    Bio = currentUser.Bio
+                }
             };
         }
     }

@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using MediatR;
+using Microsoft.Extensions.DependencyInjection;
+using RealworldConduit.Infrastructure.Filters;
 
 namespace RealworldConduit.Infrastructure.Extensions
 {
@@ -10,6 +12,12 @@ namespace RealworldConduit.Infrastructure.Extensions
             services.AddMediatR(cfg =>
                      cfg.RegisterServicesFromAssemblies(executingAssembly));
 
+            return services;
+        }
+
+        public static IServiceCollection FluentValidationFilterConfiguration(this IServiceCollection services)
+        {
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(FluentValidationPipelineFilter<,>));
             return services;
         }
     }

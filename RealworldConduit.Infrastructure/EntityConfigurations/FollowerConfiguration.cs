@@ -11,7 +11,7 @@
             builder.HasOne(x => x.FollowedUser)
                    .WithMany(x => x.FollowedUsers)
                    .HasForeignKey(x => x.FollowedUserId);
-                   
+
             builder.HasOne(x => x.Follower)
                    .WithMany(x => x.Followers)
                    .HasForeignKey(x => x.FollowerId);
