@@ -2,16 +2,16 @@
 
 namespace RealWorldConduit.Infrastructure.Common
 {
-    public class BaseResponse<T>
+    public class BaseResponseDTO<T>
     {
         public HttpStatusCode Code { get; set; }
         public string Message { get; set; }
         public T Data { get; set; }
 
-        public BaseResponse()
+        public BaseResponseDTO()
         {
         }
-        public BaseResponse(T data)
+        public BaseResponseDTO(T data)
         {
             Data = data;
         }

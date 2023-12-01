@@ -31,7 +31,7 @@ namespace RealWorldConduit.Application.Users.Commands
             _currentUser = currentUser;
             _cacheService = cacheService;
         }
-        public async Task<BaseResponse<AuthDTO>> Handle(UserRefreshTokenCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponseDTO<AuthDTO>> Handle(UserRefreshTokenCommand request, CancellationToken cancellationToken)
         {
 
             var oldRefreshToken = await _dbContext.RefreshTokens
@@ -61,10 +61,10 @@ namespace RealWorldConduit.Application.Users.Commands
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return new BaseResponse<AuthDTO>(authDTO);
+            return new BaseResponseDTO<AuthDTO>(authDTO);
         }
 
-        private BaseResponse<AuthDTO> CachedRefreshTokenHandler(string refreshToken)
+        private BaseResponseDTO<AuthDTO> CachedRefreshTokenHandler(string refreshToken)
         {
             var cachedRefreshToken = _cacheService.GetItem<AuthDTO>($"refreshTokenResponse-{refreshToken}");
 
@@ -73,7 +73,7 @@ namespace RealWorldConduit.Application.Users.Commands
                 throw new RestException(HttpStatusCode.Unauthorized, "Invalid refresh token");
             }
 
-            return new BaseResponse<AuthDTO>(cachedRefreshToken);
+            return new BaseResponseDTO<AuthDTO>(cachedRefreshToken);
         }
     }
 }

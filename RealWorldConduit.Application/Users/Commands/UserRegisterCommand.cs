@@ -63,7 +63,7 @@ namespace RealWorldConduit.Application.Users.Commands
             _dbContext = dbContext;
             _authService = authService;
         }
-        public async Task<BaseResponse<AuthDTO>> Handle(UserRegisterCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponseDTO<AuthDTO>> Handle(UserRegisterCommand request, CancellationToken cancellationToken)
         {
             var newUser = new User
             {
@@ -78,7 +78,7 @@ namespace RealWorldConduit.Application.Users.Commands
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return new BaseResponse<AuthDTO>
+            return new BaseResponseDTO<AuthDTO>
             {
                 Code = HttpStatusCode.OK,
                 Message = $"Successfully register user {request.Email}",

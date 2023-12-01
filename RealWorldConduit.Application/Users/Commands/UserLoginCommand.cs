@@ -43,7 +43,7 @@ namespace RealWorldConduit.Application.Users.Commands
             _dbContext = dbContext;
             _authService = authService;
         }
-        public async Task<BaseResponse<AuthDTO>> Handle(UserLoginCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponseDTO<AuthDTO>> Handle(UserLoginCommand request, CancellationToken cancellationToken)
         {
             var existedUser = await _dbContext.Users
                                     .AsNoTracking()
@@ -59,7 +59,7 @@ namespace RealWorldConduit.Application.Users.Commands
             _dbContext.RefreshTokens.Add(newRefreshToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return new BaseResponse<AuthDTO>
+            return new BaseResponseDTO<AuthDTO>
             {
                 Code = HttpStatusCode.OK,
                 Message = "Successfully logged in",

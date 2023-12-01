@@ -8,11 +8,11 @@ using System.Net;
 
 namespace RealWorldConduit.Application.Users.Queries
 {
-    public class GetCurrentUserQuery : IRequestWithBaseResponse<UserDTO>
+    public class GetCurrentUserQuery : IRequestWithBaseResponse<MinimalProfileDTO>
     {
 
     }
-    internal class GetCurrentUserQueryHandler : IRequestWithBaseResponseHandler<GetCurrentUserQuery, UserDTO>
+    internal class GetCurrentUserQueryHandler : IRequestWithBaseResponseHandler<GetCurrentUserQuery, MinimalProfileDTO>
     {
         private readonly MainDbContext _dbContext;
         private readonly ICurrentUser _currentUser;
@@ -22,7 +22,7 @@ namespace RealWorldConduit.Application.Users.Queries
             _dbContext = dbContext;
             _currentUser = currentUser;
         }
-        public async Task<BaseResponse<UserDTO>> Handle(GetCurrentUserQuery request, CancellationToken cancellationToken)
+        public async Task<BaseResponseDTO<MinimalProfileDTO>> Handle(GetCurrentUserQuery request, CancellationToken cancellationToken)
         {
             var currentUser = await _dbContext.Users.Where(u => u.Id == _currentUser.Id)
                                               .FirstOrDefaultAsync();
@@ -32,16 +32,16 @@ namespace RealWorldConduit.Application.Users.Queries
                 throw new RestException(HttpStatusCode.NotFound, "User Not Found");
             }
 
-            return new BaseResponse<UserDTO>
+            return new BaseResponseDTO<MinimalProfileDTO>
             {
                 Code = HttpStatusCode.OK,
                 Message = $"Successfully get current {currentUser.Email} user",
-                Data = new UserDTO
+                Data = new MinimalProfileDTO
                 {
                     Username = currentUser.Username,
                     Email = currentUser.Email,
                     ProfileImage = currentUser.ProfileImage,
-                    Bio = currentUser.Bio
+                    Bio = currentUser.Bio,
                 }
             };
         }

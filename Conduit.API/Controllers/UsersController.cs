@@ -19,17 +19,18 @@ namespace Conduit.API.Controllers
 
         [Authorize]
         [HttpGet("/api/user")]
-        public async Task<IActionResult> GetCurrentUser()
+        public async Task<IActionResult> GetCurrentUser(CancellationToken cancellationToken)
         {
-            var currentUser = await _mediator.Send(new GetCurrentUserQuery());
+            var currentUser = await _mediator.Send(new GetCurrentUserQuery(), cancellationToken);
             return Ok(currentUser);
         }
 
         [Authorize]
         [HttpPut("/api/user")]
-        public async Task<IActionResult> UpdateCurrentUser()
+        public async Task<IActionResult> UpdateCurrentUser(UpdateCurrentUserCommand request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var updateCurrentUser = await _mediator.Send(request, cancellationToken);
+            return Ok(updateCurrentUser);
         }
 
         [Authorize]

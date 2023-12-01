@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RealWorldConduit.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+940a85eb149053b3360cfc9c79796cc041cea396")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7b09bdb6961b9b32c10b0c89e2a4bb05c6ae3b43")]
 [assembly: System.Reflection.AssemblyProductAttribute("RealWorldConduit.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RealWorldConduit.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
