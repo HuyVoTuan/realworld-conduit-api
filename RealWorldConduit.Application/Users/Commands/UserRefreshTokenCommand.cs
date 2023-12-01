@@ -36,7 +36,7 @@ namespace RealWorldConduit.Application.Users.Commands
 
             var oldRefreshToken = await _dbContext.RefreshTokens
                                       .Include(x => x.User)
-                                      .FirstOrDefaultAsync(x => x.AccessToken == request.RefreshToken && x.UserId == _currentUser.Id);
+                                      .FirstOrDefaultAsync(x => x.AccessToken == request.RefreshToken && x.UserId == _currentUser.Id, cancellationToken);
 
             // Check if refresh token is not in database.
             if (oldRefreshToken == null)

@@ -9,6 +9,7 @@ namespace RealWorldConduit.Application.Users.Commands
 {
     public class UpdateCurrentUserCommand : IRequestWithBaseResponse
     {
+        // TODO : Implement Validation
         public string Email { get; init; }
         public string Username { get; init; }
         public string Password { get; init; }
@@ -29,7 +30,7 @@ namespace RealWorldConduit.Application.Users.Commands
         }
         public async Task<BaseResponse> Handle(UpdateCurrentUserCommand request, CancellationToken cancellationToken)
         {
-            var currentUser = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == _currentUser.Id);
+            var currentUser = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == _currentUser.Id, cancellationToken);
 
             currentUser.Email = request.Email;
             currentUser.Username = request.Username;

@@ -31,7 +31,7 @@ namespace RealWorldConduit.Application.Articles.Queries
         public async Task<BaseResponseDTO<PagingResponseDTO<BlogDTO>>> Handle(GetPagingGlobalBlogsQuery request, CancellationToken cancellationToken)
         {
             var query = _dbContext.Blogs.AsNoTracking();
-            var totalBlogs = await query.CountAsync();
+            var totalBlogs = await query.CountAsync(cancellationToken);
 
             var blogs = await query.Select(
             x => new BlogDTO
@@ -53,7 +53,7 @@ namespace RealWorldConduit.Application.Articles.Queries
                 FavoritesCount = x.FavoriteBlogs.Count()
             })
             .Page(request.PageIndex, request.PageSize)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
             return new BaseResponseDTO<PagingResponseDTO<BlogDTO>>
             {

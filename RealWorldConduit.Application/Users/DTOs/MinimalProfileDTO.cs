@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RealWorldConduit.Application.Users.DTOs
 {
-    public class MinimalProfileDTO
+    internal class MinimalProfileDTO
     {
         public string Username { get; set; }
         public string Email { get; set; }
