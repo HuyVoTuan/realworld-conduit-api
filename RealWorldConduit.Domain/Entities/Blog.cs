@@ -1,5 +1,4 @@
-﻿using RealWorldConduit.Domain.Common;
-
+﻿
 namespace RealWorldConduit.Domain.Entities
 {
     public class Blog : BaseEntity<Guid>

@@ -3,7 +3,6 @@ using System.Security.Claims;
 
 namespace RealWorldConduit.Infrastructure.Auth
 {
-    // TODO Implement CurrentUser Later On
     public class CurrentUser : ICurrentUser
     {
         private readonly IHttpContextAccessor _httpContext;

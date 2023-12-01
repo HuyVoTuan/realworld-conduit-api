@@ -1,6 +1,4 @@
-﻿using RealWorldConduit.Domain.Common;
-
-namespace RealWorldConduit.Domain.Entities
+﻿namespace RealWorldConduit.Domain.Entities
 {
     public class RefreshToken : BaseEntity<Guid>
     {

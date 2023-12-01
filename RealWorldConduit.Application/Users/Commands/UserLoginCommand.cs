@@ -49,14 +49,14 @@ namespace RealWorldConduit.Application.Users.Commands
                                     .AsNoTracking()
                                     .FirstOrDefaultAsync(x => x.Email.Equals(request.Email), cancellationToken);
 
-            if (existedUser.Email == null || !_authService.VerifyPassword(request.Password, existedUser.Password))
+            if (existedUser == null || !_authService.VerifyPassword(request.Password, existedUser.Password))
             {
                 throw new RestException(HttpStatusCode.NotFound, "User not found!");
             }
 
+
             var newRefreshToken = _authService.GenerateRefreshToken(existedUser);
             _dbContext.RefreshTokens.Add(newRefreshToken);
-
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new BaseResponse<AuthDTO>

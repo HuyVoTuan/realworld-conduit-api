@@ -18,7 +18,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
 
 // Dependency Injection
-builder.Services.MediatRConfiguration()
+builder.Services.ServicesConfiguration()
+                .MediatRConfiguration()
                 .FluentValidationConfiguration()
                 .FluentValidationFilterConfiguration()
                 .AuthConfiguration(builder.Configuration)

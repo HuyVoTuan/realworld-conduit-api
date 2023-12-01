@@ -8,6 +8,13 @@ namespace RealWorldConduit.Infrastructure.Common
         public string Message { get; set; }
         public T Data { get; set; }
 
+        public BaseResponse()
+        {
+        }
+        public BaseResponse(T data)
+        {
+            Data = data;
+        }
     }
 
     public class BaseResponse
