@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -8,26 +9,20 @@ namespace RealworldConduit.Infrastructure.Helpers
     {
         public static string GenerateSlug(string input)
         {
-            if (input == null)
-                throw new ArgumentNullException(nameof(input));
+            int slugLength = 2;
 
-            var normalizedString = input.Normalize(NormalizationForm.FormD);
-            var stringBuilder = new StringBuilder();
+            byte[] randomBytes = new byte[slugLength];
 
-            foreach (var c in normalizedString)
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
             {
-                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
-                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
-                {
-                    stringBuilder.Append(c);
-                }
+                rng.GetBytes(randomBytes);
             }
 
-            var sanitizedString = Regex.Replace(stringBuilder.ToString().ToLower(), @"[^a-z0-9\s-]", "");
+            string randomSlug = BitConverter.ToString(randomBytes).Replace("-", "").ToLower();
 
-            sanitizedString = Regex.Replace(sanitizedString, @"\s+", "-").Trim();
+            string finalSlug = $"{input}-{randomSlug}";
 
-            return sanitizedString;
+            return finalSlug;
         }
     }
 }
