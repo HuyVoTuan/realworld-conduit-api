@@ -30,30 +30,35 @@ namespace RealWorldConduit.Application.Articles.Queries
         }
         public async Task<BaseResponseDTO<PagingResponseDTO<BlogDTO>>> Handle(GetPagingGlobalBlogsQuery request, CancellationToken cancellationToken)
         {
-            var query = _dbContext.Blogs.AsNoTracking();
+            var query = _dbContext.Blogs.AsNoTracking()
+                     .AsSplitQuery()
+                    .Select(
+                    x => new BlogDTO
+                    {
+                        Title = x.Title,
+                        Description = x.Description,
+                        Content = x.Content,
+                        TagList = x.BlogTags.Select(x => x.Tag.Name).ToList(),
+                        CreatedAt = x.CreatedAt,
+                        LastUpdatedAt = x.LastUpdatedAt,
+                        Profile = new ProfileDTO
+                        {
+                            Username = x.Author.Username,
+                            Email = x.Author.Email,
+                            Bio = x.Author.Bio,
+                            Following = x.Author.FollowedUsers.Any(x => x.FollowerId == _currentUser.Id),
+                            ProfileImage = x.Author.ProfileImage
+                        },
+                        Favorited = x.FavoriteBlogs.Any(x => x.FavoritedById == _currentUser.Id),
+                        FavoritesCount = x.FavoriteBlogs.Count()
+                    })
+                    .OrderBy(x => x.LastUpdatedAt);
+
             var totalBlogs = await query.CountAsync(cancellationToken);
 
-            var blogs = await query.Select(
-            x => new BlogDTO
-            {
-                Title = x.Title,
-                Description = x.Description,
-                Content = x.Content,
-                TagList = x.BlogTags.Select(x => x.Tag.Name).ToList(),
-                CreatedAt = x.CreatedAt,
-                LastUpdatedAt = x.LastUpdatedAt,
-                Profile = new ProfileDTO
-                {
-                    Username = x.Author.Username,
-                    Bio = x.Author.Bio,
-                    Following = x.Author.FollowedUsers.Any(x => x.FollowerId == _currentUser.Id),
-                    ProfileImage = x.Author.ProfileImage
-                },
-                Favorited = x.FavoriteBlogs.Any(x => x.FavoritedById == _currentUser.Id),
-                FavoritesCount = x.FavoriteBlogs.Count()
-            })
-            .Page(request.PageIndex, request.PageSize)
-            .ToListAsync(cancellationToken);
+            var pagedBlogs = await query
+                                   .Page(request.PageIndex, request.PageSize)
+                                   .ToListAsync(cancellationToken);
 
             return new BaseResponseDTO<PagingResponseDTO<BlogDTO>>
             {
@@ -64,7 +69,7 @@ namespace RealWorldConduit.Application.Articles.Queries
                     PageIndex = request.PageIndex,
                     PageSize = request.PageSize,
                     TotalCount = totalBlogs,
-                    Data = blogs
+                    Data = pagedBlogs
                 }
             };
         }
