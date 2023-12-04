@@ -9,14 +9,6 @@ namespace RealWorldConduit.Domain.Entities
         public virtual User Author { get; set; }
         public Guid AuthorId { get; set; }
         public ICollection<FavoriteBlog> FavoriteBlogs { get; set; }
-        public ICollection<BlogTag> BlogTags { get; set; }
-
-        public Blog(string title, string description, string content, Guid authorId)
-        {
-            Title = title;
-            Description = description;
-            Content = content;
-            AuthorId = authorId;
-        }
+        public ICollection<BlogTag> BlogTags { get; set; }      
     }
 }

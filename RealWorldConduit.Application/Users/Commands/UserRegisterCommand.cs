@@ -68,7 +68,7 @@ namespace RealWorldConduit.Application.Users.Commands
         {
             var newUser = new User
             {
-                Username = StringHelper.GenerateSlug(request.Username),
+                Username = request.Username,
                 Email = request.Email,
                 Password = _authService.HashPassword(request.Password)
             };

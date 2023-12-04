@@ -32,34 +32,52 @@ namespace RealWorldConduit.Application.Blogs.Commands
         }
         public async Task<BaseResponseDTO<BlogDTO>> Handle(CreateBlogCommand request, CancellationToken cancellationToken)
         {
-            var filteredTags = await TagsFilter(request, cancellationToken);
-            var isBlogExisted = await IsBlogExisted(request, cancellationToken);
+            var requestFilteredTags = await RequestTagsFilter(request, cancellationToken);
 
-            if (!isBlogExisted)
+            var blog = await _dbContext.Blogs.FirstOrDefaultAsync(x => x.Title.Equals(request.Title), cancellationToken);
+
+            var author = await _dbContext.Users.AsNoTracking()
+                                               .Where(u => u.Id == _currentUser.Id)
+                                               .Select(u => new ProfileDTO
+                                               {
+                                                  Username = u.Username,
+                                                  Email = u.Email,
+                                                  Bio = u.Bio,
+                                                  ProfileImage = u.ProfileImage,
+                                                  Following = u.FollowedUsers.Any(f => f.FollowerId == _currentUser.Id)
+                                               }).FirstOrDefaultAsync(cancellationToken);
+
+            if (blog is not null)
             {
-                throw new RestException(HttpStatusCode.Found, $"A blog with {request.Title} title is already existed!");
+                throw new RestException(HttpStatusCode.NotFound, $"A blog with {request.Title} title is existed!");
             }
 
-            var newBlog = await ProcessBlogAndTags(filteredTags, request, cancellationToken);
+            blog = new Blog
+            {
+                Title = request.Title,
+                Description = request.Description,
+                Content = request.Content,
+                AuthorId = (Guid)_currentUser.Id,
+            };
+
+            _dbContext.Blogs.Add(blog);
+
+            // Add range to BlogTags based on filterd tags
+            _dbContext.BlogsTag.AddRange(requestFilteredTags.Select(tag => new BlogTag { Blog = blog, Tag = tag }));
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             var blogDTO = new BlogDTO
             {
-                Title = newBlog.Title,
-                Description = newBlog.Description,
-                Content = newBlog.Content,
-                TagList = newBlog.BlogTags.Select(x => x.Tag.Name).ToList(),
-                CreatedAt = newBlog.CreatedAt,
-                LastUpdatedAt = newBlog.LastUpdatedAt,
-                Profile = new ProfileDTO
-                {
-                    Username = newBlog.Author.Username,
-                    Email = newBlog.Author.Email,
-                    Bio = newBlog.Author.Bio,
-                    Following = newBlog.Author.FollowedUsers.Any(x => x.FollowerId == _currentUser.Id),
-                    ProfileImage = newBlog.Author.ProfileImage
-                },
-                Favorited = newBlog.FavoriteBlogs.Any(x => x.FavoritedById == _currentUser.Id),
-                FavoritesCount = newBlog.FavoriteBlogs.Count()
+                Title = blog.Title,
+                Description = blog.Description,
+                Content = blog.Content,
+                TagList = blog.BlogTags.Select(x => x.Tag.Name).ToList(),
+                CreatedAt = blog.CreatedAt,
+                LastUpdatedAt = blog.LastUpdatedAt,
+                Profile = author,
+                Favorited = blog.FavoriteBlogs?.Any(x => x.FavoritedById == _currentUser.Id) ?? false,
+                FavoritesCount = blog.FavoriteBlogs?.Count() ?? 0,
             };
 
             return new BaseResponseDTO<BlogDTO>
@@ -69,34 +87,8 @@ namespace RealWorldConduit.Application.Blogs.Commands
                 Data = blogDTO
             };
         }
-        private async Task<Blog> ProcessBlogAndTags(List<Tag> filteredTags, CreateBlogCommand request, CancellationToken cancellationToken)
-        {
-            var newBlog = new Blog(
-               StringHelper.GenerateSlug(request.Title), request.Description,
-               request.Content, (Guid)_currentUser.Id
-           );
 
-            _dbContext.Blogs.Add(newBlog);
-
-            // Add range to BlogTags based on filterd tags
-            _dbContext.BlogsTag.AddRange(
-               filteredTags.Select(tag => new BlogTag { Blog = newBlog, Tag = tag }
-           ));
-
-            await _dbContext.SaveChangesAsync(cancellationToken);
-
-            return newBlog;
-        }
-
-        private async Task<bool> IsBlogExisted(CreateBlogCommand request, CancellationToken cancellationToken)
-        {
-            var result = await _dbContext.Blogs.AsNoTracking()
-                               .AnyAsync(x => x.Title == request.Title, cancellationToken);
-
-            return result;
-        }
-
-        private async Task<List<Tag>> TagsFilter(CreateBlogCommand request, CancellationToken cancellationToken)
+        private async Task<List<Tag>> RequestTagsFilter(CreateBlogCommand request, CancellationToken cancellationToken)
         {
             var tags = new List<Tag>();
             var processedRequestTags = request.TagList.Distinct().ToList();
@@ -106,25 +98,20 @@ namespace RealWorldConduit.Application.Blogs.Commands
             {
                 var t = await _dbContext.Tags.FirstOrDefaultAsync(x => x.Name.Equals(tag), cancellationToken);
 
-                if (t is not null)
+                if (t is null)
                 {
-                    continue;
+                    t = new Tag
+                    {
+                        Name = tag,
+                    };
+
+                    _dbContext.Tags.Add(t);
+
+                    // Save for later on reusability
+                    await _dbContext.SaveChangesAsync(cancellationToken);
                 }
-
-                t = new Tag
-                {
-                    Name = tag,
-                };
-
-                _dbContext.Tags.Add(t);
-
-                // Save for later on reusability
-                await _dbContext.SaveChangesAsync(cancellationToken);
-
-                // Add to tags list after being filterd
                 tags.Add(t);
             }
-
             return tags;
         }
     }

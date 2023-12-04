@@ -30,8 +30,8 @@ namespace RealWorldConduit.Application.Blogs.Commands
 
         public async Task<BaseResponseDTO<BlogDTO>> Handle(UpdateCurrentBlogCommand request, CancellationToken cancellationToken)
         {
-            var oldBlog = await _dbContext.Blogs.FirstOrDefaultAsync(x => x.Title.Equals(request.Title), cancellationToken);
-
+            var oldBlog = await _dbContext.Blogs.FirstOrDefaultAsync(x => x.Title.Equals(request.Title) && x.AuthorId == _currentUser.Id, cancellationToken);
+           
             if (oldBlog is null)
             {
                 throw new RestException(HttpStatusCode.NotFound, $"A blog with {request.Title} title is not found!");
