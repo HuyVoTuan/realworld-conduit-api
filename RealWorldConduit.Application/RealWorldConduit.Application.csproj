@@ -9,8 +9,4 @@
     <ProjectReference Include="..\RealworldConduit.Infrastructure\RealworldConduit.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Blogs\Commands\" />
-  </ItemGroup>
-
 </Project>

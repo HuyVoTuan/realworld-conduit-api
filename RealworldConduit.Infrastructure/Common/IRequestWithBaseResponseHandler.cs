@@ -7,7 +7,7 @@ namespace RealworldConduit.Infrastructure.Common
     {
     }
 
-    public interface IRequestWithBaseResponseHandler<TRequest> : IRequestHandler<TRequest, BaseResponse> where TRequest : IRequestWithBaseResponse
+    public interface IRequestWithBaseResponseHandler<TRequest> : IRequestHandler<TRequest, BaseResponseDTO> where TRequest : IRequestWithBaseResponse
     {
     }
 }

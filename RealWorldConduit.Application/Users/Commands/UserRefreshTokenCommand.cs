@@ -1,8 +1,6 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using RealworldConduit.Infrastructure.Common;
 using RealworldConduit.Infrastructure.Services;
-using RealWorldConduit.Domain.Entities;
 using RealWorldConduit.Infrastructure;
 using RealWorldConduit.Infrastructure.Auth;
 using RealWorldConduit.Infrastructure.Common;
@@ -10,6 +8,7 @@ using System.Net;
 
 namespace RealWorldConduit.Application.Users.Commands
 {
+    // TODO : Add Validation Later On
     public record UserRefreshTokenCommand(string RefreshToken) : IRequestWithBaseResponse<AuthDTO>;
 
     internal class UserRefreshTokenCommandHandler : IRequestWithBaseResponseHandler<UserRefreshTokenCommand, AuthDTO>
@@ -39,7 +38,7 @@ namespace RealWorldConduit.Application.Users.Commands
                                       .FirstOrDefaultAsync(x => x.AccessToken == request.RefreshToken && x.UserId == _currentUser.Id, cancellationToken);
 
             // Check if refresh token is not in database.
-            if (oldRefreshToken == null)
+            if (oldRefreshToken is null)
             {
                 // Check if previous refresh token is still in the cache.
                 return CachedRefreshTokenHandler(request.RefreshToken);
@@ -68,7 +67,7 @@ namespace RealWorldConduit.Application.Users.Commands
         {
             var cachedRefreshToken = _cacheService.GetItem<AuthDTO>($"refreshTokenResponse-{refreshToken}");
 
-            if (cachedRefreshToken == null)
+            if (cachedRefreshToken is null)
             {
                 throw new RestException(HttpStatusCode.Unauthorized, "Invalid refresh token");
             }

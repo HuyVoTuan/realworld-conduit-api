@@ -1,5 +1,4 @@
 using RealworldConduit.Infrastructure.Extensions;
-using RealworldConduit.Infrastructure.Filters;
 using RealWorldConduit.Infrastructure.Extensions;
 using RealWorldConduit.Infrastructure.Middlewares;
 

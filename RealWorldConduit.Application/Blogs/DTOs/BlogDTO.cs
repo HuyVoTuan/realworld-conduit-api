@@ -1,10 +1,4 @@
-﻿using RealworldConduit.Infrastructure.Common;
-using RealWorldConduit.Application.Users.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using RealWorldConduit.Application.Users.DTOs;
 
 namespace RealWorldConduit.Application.Articles.DTOs
 {

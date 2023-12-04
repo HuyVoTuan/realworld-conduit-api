@@ -19,7 +19,7 @@ namespace RealWorldConduit.Infrastructure.Auth
                 var userId = _httpContext.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 bool isGuidParsed = Guid.TryParse(userId, out Guid id);
 
-                if (userId == null || !isGuidParsed)
+                if (userId is null || !isGuidParsed)
                 {
                     return null;
                 }

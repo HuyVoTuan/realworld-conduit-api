@@ -31,7 +31,7 @@ namespace RealWorldConduit.Infrastructure.Middlewares
                 if (exception is RestException)
                 {
                     httpContext.Response.StatusCode = (int)exception.Data[RestException.STATUS_CODE];
-                    await httpContext.Response.WriteAsJsonAsync(new BaseResponse
+                    await httpContext.Response.WriteAsJsonAsync(new BaseResponseDTO
                     {
                         Code = (HttpStatusCode)httpContext.Response.StatusCode,
                         Message = exception.Message
@@ -40,7 +40,7 @@ namespace RealWorldConduit.Infrastructure.Middlewares
                 else
                 {
                     httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    await httpContext.Response.WriteAsJsonAsync(new BaseResponse
+                    await httpContext.Response.WriteAsJsonAsync(new BaseResponseDTO
                     {
                         Code = (HttpStatusCode)httpContext.Response.StatusCode,
                         Message = "An unexpected internal error occurred"

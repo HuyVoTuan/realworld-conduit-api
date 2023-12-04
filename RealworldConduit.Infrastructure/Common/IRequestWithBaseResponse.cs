@@ -8,7 +8,7 @@ namespace RealworldConduit.Infrastructure.Common
 
     }
 
-    public interface IRequestWithBaseResponse : IRequest<BaseResponse>
+    public interface IRequestWithBaseResponse : IRequest<BaseResponseDTO>
     {
 
     }

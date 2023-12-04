@@ -27,7 +27,7 @@ namespace RealWorldConduit.Application.Users.Queries
             var currentUser = await _dbContext.Users.Where(u => u.Id == _currentUser.Id)
                                               .FirstOrDefaultAsync();
 
-            if (currentUser == null)
+            if (currentUser is null)
             {
                 throw new RestException(HttpStatusCode.NotFound, "User Not Found");
             }

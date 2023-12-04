@@ -49,7 +49,7 @@ namespace RealWorldConduit.Application.Users.Commands
                                     .AsNoTracking()
                                     .FirstOrDefaultAsync(x => x.Email.Equals(request.Email), cancellationToken);
 
-            if (existedUser == null || !_authService.VerifyPassword(request.Password, existedUser.Password))
+            if (existedUser is null || !_authService.VerifyPassword(request.Password, existedUser.Password))
             {
                 throw new RestException(HttpStatusCode.NotFound, "User not found!");
             }

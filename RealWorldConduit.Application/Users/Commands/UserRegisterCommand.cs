@@ -7,6 +7,7 @@ using RealWorldConduit.Infrastructure.Auth;
 using RealWorldConduit.Infrastructure.Common;
 using System.Net;
 
+
 namespace RealWorldConduit.Application.Users.Commands
 {
     public class UserRegisterCommand : IRequestWithBaseResponse<AuthDTO>
@@ -67,7 +68,7 @@ namespace RealWorldConduit.Application.Users.Commands
         {
             var newUser = new User
             {
-                Username = GenerateSlugHelper.GenerateSlug(request.Username),
+                Username = StringHelper.GenerateSlug(request.Username),
                 Email = request.Email,
                 Password = _authService.HashPassword(request.Password)
             };

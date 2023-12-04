@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RealworldConduit.Infrastructure.Common;
+using RealworldConduit.Infrastructure.Helpers;
 using RealWorldConduit.Infrastructure;
 using RealWorldConduit.Infrastructure.Auth;
 using RealWorldConduit.Infrastructure.Common;
@@ -28,12 +29,12 @@ namespace RealWorldConduit.Application.Users.Commands
             _currentUser = currentUser;
             _authService = authService;
         }
-        public async Task<BaseResponse> Handle(UpdateCurrentUserCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponseDTO> Handle(UpdateCurrentUserCommand request, CancellationToken cancellationToken)
         {
             var currentUser = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == _currentUser.Id, cancellationToken);
 
             currentUser.Email = request.Email;
-            currentUser.Username = request.Username;
+            currentUser.Username = StringHelper.GenerateSlug(request.Username);
             currentUser.Password = _authService.HashPassword(request.Password);
             currentUser.Bio = request.Bio;
             currentUser.ProfileImage = request.ProfileImage;
@@ -41,7 +42,7 @@ namespace RealWorldConduit.Application.Users.Commands
             _dbContext.Update(currentUser);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return new BaseResponse
+            return new BaseResponseDTO
             {
                 Code = HttpStatusCode.NoContent,
                 Message = "Successfully update current user"

@@ -17,7 +17,7 @@ namespace RealWorldConduit.Infrastructure.Common
         }
     }
 
-    public class BaseResponse
+    public class BaseResponseDTO
     {
         public HttpStatusCode Code { get; set; }
         public string Message { get; set; }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RealworldConduit.Infrastructure.Common
+﻿namespace RealworldConduit.Infrastructure.Common
 {
     public class PagingResponseDTO<T>
     {
