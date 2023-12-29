@@ -5,11 +5,11 @@ using System.Net;
 
 namespace RealworldConduit.Infrastructure.Filters
 {
-    public class FluentValidationPipelineFilter<TRequest, TRespone> : IPipelineBehavior<TRequest, TRespone>
+    public class FluentValidationBehavior<TRequest, TRespone> : IPipelineBehavior<TRequest, TRespone>
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
 
-        public FluentValidationPipelineFilter(IEnumerable<IValidator<TRequest>> validators)
+        public FluentValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
         {
             _validators = validators;
         }

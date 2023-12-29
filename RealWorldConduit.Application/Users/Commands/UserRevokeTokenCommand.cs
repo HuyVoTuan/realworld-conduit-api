@@ -8,7 +8,7 @@ using System.Net;
 
 namespace RealWorldConduit.Application.Users.Commands
 {
-    public class UserRevokeTokenCommand : IRequestWithBaseResponse { };
+    public record UserRevokeTokenCommand() : IRequestWithBaseResponse;
     internal class UserRevokeTokenCommandHandler : IRequestWithBaseResponseHandler<UserRevokeTokenCommand>
     {
         private readonly MainDbContext _dbContext;
@@ -22,14 +22,17 @@ namespace RealWorldConduit.Application.Users.Commands
 
         public async Task<BaseResponseDTO> Handle(UserRevokeTokenCommand request, CancellationToken cancellationToken)
         {
-            var refreshTokenLists = await _dbContext.RefreshTokens.Where(x => x.UserId == _currentUser.Id).ToListAsync(cancellationToken);
+            var refreshTokenLists = await _dbContext.RefreshTokens
+                                         .Where(x => x.UserId == _currentUser.Id)
+                                         .ToListAsync(cancellationToken);
 
             _dbContext.RefreshTokens.RemoveRange(refreshTokenLists);
             await _dbContext.SaveChangesAsync(cancellationToken);
+
             return new BaseResponseDTO
             {
                 Code = HttpStatusCode.NoContent,
-                Message = "Successfully revoke all user tokens"
+                Message = "Successfully revoke all current user tokens"
             };
         }
     }

@@ -4,7 +4,7 @@
     {
         public void Configure(EntityTypeBuilder<Tag> builder)
         {
-            builder.ToTable<Tag>(nameof(Tag), MainDbContext.BlogSchema);
+            builder.ToTable(nameof(Tag), MainDbContext.BlogSchema);
 
             builder.Property(x => x.Name).IsRequired().HasMaxLength(50);
 

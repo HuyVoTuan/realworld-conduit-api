@@ -34,7 +34,7 @@ namespace Conduit.API.Controllers
         }
 
         [Authorize]
-        [HttpGet("{title}")]
+        [HttpGet("{slug}")]
         public async Task<IActionResult> GetABlog([FromRoute] GetABlogQuery request, CancellationToken cancellationToken)
         {
             var blog = await _mediator.Send(request, cancellationToken);
@@ -42,7 +42,7 @@ namespace Conduit.API.Controllers
         }
 
         [Authorize]
-        [HttpPut("{title}")]
+        [HttpPut("{slug}")]
         public async Task<IActionResult> UpdateCurrentBlog([FromBody] UpdateCurrentBlogCommand request, CancellationToken cancellationToken)
         {
             var newBlog = await _mediator.Send(request, cancellationToken);
@@ -50,11 +50,19 @@ namespace Conduit.API.Controllers
         }
 
         [Authorize]
-        [HttpDelete("{title}")]
+        [HttpDelete("{slug}")]
         public async Task<IActionResult> DeleteCurrentBlog([FromRoute] DeleteCurrentBlogCommand request, CancellationToken cancellationToken)
         {
             var newBlog = await _mediator.Send(request, cancellationToken);
             return Ok(newBlog);
+        }
+
+        [Authorize]
+        [HttpPost("{slug}/favorite")]
+        public async Task<IActionResult> UpsertFavoriteABlog([FromRoute] UpsertFavoriteABlogCommand request, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(request, cancellationToken);
+            return Ok(result);
         }
     }
 }

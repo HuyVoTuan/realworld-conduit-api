@@ -63,7 +63,7 @@ namespace Conduit.API.Controllers
             return Ok(newUser);
         }
 
-        [HttpGet("{username}")]
+        [HttpGet("{slug}")]
         public async Task<IActionResult> GetAProfile([FromRoute] GetAProfileQuery request, CancellationToken cancellationToken)
         {
             var profile = await _mediator.Send(request, cancellationToken);
@@ -71,19 +71,11 @@ namespace Conduit.API.Controllers
         }
 
         [Authorize]
-        [HttpPost("{username}/follow")]
-        public async Task<IActionResult> FollowAProfile([FromRoute] FollowAProfileCommand request, CancellationToken cancellationToken)
+        [HttpPost("{slug}/follow")]
+        public async Task<IActionResult> FollowAProfile([FromRoute] UpsertFollowAProfileCommand request, CancellationToken cancellationToken)
         {
             var profile = await _mediator.Send(request, cancellationToken);
             return Ok(profile);
-        }
-
-        [Authorize]
-        [HttpDelete("{username}/unfollow")]
-        public async Task<IActionResult> UnfollowAProfile([FromRoute] UnfollowAProfileCommand request, CancellationToken cancellationToken)
-        {
-            var profile = await _mediator.Send(request, cancellationToken);
-            return Ok(profile);
-        }
+        }      
     }
 }

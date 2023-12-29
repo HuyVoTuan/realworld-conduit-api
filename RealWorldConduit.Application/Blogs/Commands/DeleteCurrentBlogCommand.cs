@@ -10,7 +10,7 @@ namespace RealWorldConduit.Application.Blogs.Commands
     public class DeleteCurrentBlogCommand : IRequestWithBaseResponse
     {
         // TODO : Implement Validation Later
-        public string Title { get; set; }
+        public string Slug { get; init; }
 
     }
 
@@ -26,11 +26,12 @@ namespace RealWorldConduit.Application.Blogs.Commands
         }
         public async Task<BaseResponseDTO> Handle(DeleteCurrentBlogCommand request, CancellationToken cancellationToken)
         {
-            var oldBlog = await _dbContext.Blogs.FirstOrDefaultAsync(x => x.Title.Equals(request.Title) && x.AuthorId == _currentUser.Id, cancellationToken);
+            var oldBlog = await _dbContext.Blogs
+                                .FirstOrDefaultAsync(x => x.Slug.Equals(request.Slug) && x.AuthorId == _currentUser.Id, cancellationToken);
 
             if (oldBlog is null)
             {
-                throw new RestException(HttpStatusCode.NotFound, $"A blog with {request.Title} title is not found!");
+                throw new RestException(HttpStatusCode.NotFound, $"{request.Slug} blog is not found!");
             }
 
             _dbContext.Blogs.Remove(oldBlog);
@@ -38,8 +39,8 @@ namespace RealWorldConduit.Application.Blogs.Commands
 
             return new BaseResponseDTO
             {
-                Code = HttpStatusCode.OK,
-                Message = $"Successfully delete {oldBlog.Title} blog",
+                Code = HttpStatusCode.NoContent,
+                Message = $"{oldBlog.Slug} blog has been successfully deleted",
             };
         }
     }

@@ -33,8 +33,9 @@ namespace RealWorldConduit.Application.Users.Commands
         {
             var currentUser = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == _currentUser.Id, cancellationToken);
 
+            currentUser.Slug = StringHelper.GenerateSlug(request.Username);
             currentUser.Email = request.Email;
-            currentUser.Username = StringHelper.GenerateSlug(request.Username);
+            currentUser.Username = request.Username;
             currentUser.Password = _authService.HashPassword(request.Password);
             currentUser.Bio = request.Bio;
             currentUser.ProfileImage = request.ProfileImage;

@@ -4,7 +4,7 @@
     {
         public void Configure(EntityTypeBuilder<UserFollower> builder)
         {
-            builder.ToTable<UserFollower>(nameof(UserFollower), MainDbContext.UserSchema);
+            builder.ToTable(nameof(UserFollower), MainDbContext.UserSchema);
 
             builder.HasKey(x => new { x.FollowedUserId, x.FollowerId });
 

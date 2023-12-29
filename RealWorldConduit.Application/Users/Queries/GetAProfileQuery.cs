@@ -9,7 +9,7 @@ using System.Net;
 namespace RealWorldConduit.Application.Users.Queries
 {
     // TODO : Implent Validation Later On
-    public record GetAProfileQuery(string Username) : IRequestWithBaseResponse<ProfileDTO>;
+    public record GetAProfileQuery(string Slug) : IRequestWithBaseResponse<ProfileDTO>;
     internal class GetAProfileQueryHandler : IRequestWithBaseResponseHandler<GetAProfileQuery, ProfileDTO>
     {
         private readonly MainDbContext _dbContext;
@@ -22,26 +22,29 @@ namespace RealWorldConduit.Application.Users.Queries
         }
         public async Task<BaseResponseDTO<ProfileDTO>> Handle(GetAProfileQuery request, CancellationToken cancellationToken)
         {
-            var profile = await _dbContext.Users.AsNoTracking()
-                                          .Select(x => new ProfileDTO
-                                          {
-                                              Username = x.Username,
-                                              Bio = x.Bio,
-                                              Email = x.Email,
-                                              ProfileImage = x.ProfileImage,
-                                              Following = x.FollowedUsers.Any(fl => fl.FollowerId == _currentUser.Id)
-                                          }).FirstOrDefaultAsync(x => x.Username == request.Username, cancellationToken);
+            var targetUserDTO = await _dbContext.Users
+                                .AsNoTracking()
+                                .Select(x => new ProfileDTO
+                                {
+                                    Slug = x.Slug,
+                                    Username = x.Username,
+                                    Bio = x.Bio,
+                                    Email = x.Email,
+                                    ProfileImage = x.ProfileImage,
+                                    IsFollowing = x.FollowedUsers.Any(fl => fl.FollowerId == _currentUser.Id)
+                                })
+                                .FirstOrDefaultAsync(x => x.Slug.Equals(request.Slug), cancellationToken);
 
-            if (profile is null)
+            if (targetUserDTO is null)
             {
-                throw new RestException(HttpStatusCode.NotFound, "User not found!");
+                throw new RestException(HttpStatusCode.NotFound, $"User {request.Slug} not found!");
             }
 
             return new BaseResponseDTO<ProfileDTO>
             {
                 Code = HttpStatusCode.OK,
-                Message = $"Successfully get {request.Username} user ",
-                Data = profile
+                Message = $"Successfully get user {targetUserDTO.Slug}",
+                Data = targetUserDTO
             };
         }
     }

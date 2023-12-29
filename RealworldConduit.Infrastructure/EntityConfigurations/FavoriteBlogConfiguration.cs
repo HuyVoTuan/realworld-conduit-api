@@ -4,7 +4,7 @@
     {
         public void Configure(EntityTypeBuilder<FavoriteBlog> builder)
         {
-            builder.ToTable<FavoriteBlog>(nameof(FavoriteBlog), MainDbContext.BlogSchema);
+            builder.ToTable(nameof(FavoriteBlog), MainDbContext.BlogSchema);
 
             builder.HasKey(x => new { x.BlogId, x.FavoritedById });
 

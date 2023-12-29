@@ -4,12 +4,12 @@
     {
         public void Configure(EntityTypeBuilder<RefreshToken> builder)
         {
-            builder.ToTable<RefreshToken>(nameof(RefreshToken), MainDbContext.UserSchema);
+            builder.ToTable(nameof(RefreshToken), MainDbContext.UserSchema);
 
-            builder.HasIndex(x => x.AccessToken);
+            builder.HasIndex(x => x.Token);
             builder.HasIndex(x => x.ExpiredDate);
 
-            builder.Property(x => x.AccessToken).IsRequired();
+            builder.Property(x => x.Token).IsRequired();
 
             builder.HasOne(x => x.User)
                    .WithMany(x => x.RefreshToken)

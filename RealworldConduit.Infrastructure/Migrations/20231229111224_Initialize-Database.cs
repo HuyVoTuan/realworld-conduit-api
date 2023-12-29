@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -40,6 +41,7 @@ namespace RealworldConduit.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Slug = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
                     Username = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
                     ProfileImage = table.Column<string>(type: "text", nullable: true),
@@ -59,6 +61,7 @@ namespace RealworldConduit.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Slug = table.Column<string>(type: "text", nullable: true),
                     Title = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
                     Description = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
                     Content = table.Column<string>(type: "text", nullable: false),
@@ -85,7 +88,7 @@ namespace RealworldConduit.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AccessToken = table.Column<string>(type: "text", nullable: false),
+                    Token = table.Column<string>(type: "text", nullable: false),
                     ExpiredDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastUpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
@@ -196,6 +199,13 @@ namespace RealworldConduit.Infrastructure.Migrations
                 column: "AuthorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Blog_Slug",
+                schema: "blog",
+                table: "Blog",
+                column: "Slug",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Blog_Title",
                 schema: "blog",
                 table: "Blog",
@@ -215,16 +225,16 @@ namespace RealworldConduit.Infrastructure.Migrations
                 column: "FavoritedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefreshToken_AccessToken",
-                schema: "user",
-                table: "RefreshToken",
-                column: "AccessToken");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_RefreshToken_ExpiredDate",
                 schema: "user",
                 table: "RefreshToken",
                 column: "ExpiredDate");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefreshToken_Token",
+                schema: "user",
+                table: "RefreshToken",
+                column: "Token");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RefreshToken_UserId",
@@ -244,6 +254,13 @@ namespace RealworldConduit.Infrastructure.Migrations
                 schema: "user",
                 table: "User",
                 column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_Slug",
+                schema: "user",
+                table: "User",
+                column: "Slug",
                 unique: true);
 
             migrationBuilder.CreateIndex(

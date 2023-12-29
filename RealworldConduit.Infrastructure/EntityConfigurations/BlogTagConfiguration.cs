@@ -4,7 +4,7 @@
     {
         public void Configure(EntityTypeBuilder<BlogTag> builder)
         {
-            builder.ToTable<BlogTag>(nameof(BlogTag), MainDbContext.BlogSchema);
+            builder.ToTable(nameof(BlogTag), MainDbContext.BlogSchema);
 
             builder.HasKey(x => new { x.BlogId, x.TagId });
 

@@ -16,20 +16,17 @@ namespace RealWorldConduit.Application.Users.Commands
 
     public class UserLoginCommandValidator : AbstractValidator<UserLoginCommand>
     {
-        private readonly MainDbContext _dbContext;
-        public UserLoginCommandValidator(MainDbContext dbContext)
+        public UserLoginCommandValidator()
         {
-            _dbContext = dbContext;
-
             RuleFor(x => x.Email).NotEmpty()
                                  .EmailAddress()
                                  .OverridePropertyName("email")
-                                 .WithMessage("Invalid email");
+                                 .WithMessage("Invalid email!");
 
             RuleFor(x => x.Password).NotEmpty()
                                     .MinimumLength(6)
                                     .OverridePropertyName("password")
-                                    .WithMessage("Invalid password or password must be more than 6 characters");
+                                    .WithMessage("Password must be more than 6 characters!");
         }
     }
 
@@ -49,24 +46,29 @@ namespace RealWorldConduit.Application.Users.Commands
                                     .AsNoTracking()
                                     .FirstOrDefaultAsync(x => x.Email.Equals(request.Email), cancellationToken);
 
-            if (existedUser is null || !_authService.VerifyPassword(request.Password, existedUser.Password))
+            if (existedUser is null)
             {
-                throw new RestException(HttpStatusCode.NotFound, "User not found!");
+                throw new RestException(HttpStatusCode.NotFound, $"User {existedUser.Slug} not found!");
             }
 
+            if (!_authService.VerifyPassword(request.Password, existedUser.Password))
+            {
+                throw new RestException(HttpStatusCode.NotFound, "Invalid password!");
+            }
 
             var newRefreshToken = _authService.GenerateRefreshToken(existedUser);
             _dbContext.RefreshTokens.Add(newRefreshToken);
+
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new BaseResponseDTO<AuthDTO>
             {
                 Code = HttpStatusCode.OK,
-                Message = "Successfully logged in",
+                Message = "Successfully log in",
                 Data = new AuthDTO
                 {
                     AccessToken = _authService.GenerateToken(existedUser),
-                    RefreshToken = newRefreshToken.AccessToken
+                    RefreshToken = newRefreshToken.Token
                 }
             };
         }

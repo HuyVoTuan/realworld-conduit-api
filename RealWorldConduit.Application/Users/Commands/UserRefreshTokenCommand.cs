@@ -34,8 +34,11 @@ namespace RealWorldConduit.Application.Users.Commands
         {
 
             var oldRefreshToken = await _dbContext.RefreshTokens
-                                      .Include(x => x.User)
-                                      .FirstOrDefaultAsync(x => x.AccessToken == request.RefreshToken && x.UserId == _currentUser.Id, cancellationToken);
+                                       .Include(x => x.User)
+                                       .FirstOrDefaultAsync(x => x.Token == request.RefreshToken 
+                                                            && x.ExpiredDate > DateTime.UtcNow 
+                                                            && x.UserId == _currentUser.Id, 
+                                                            cancellationToken);
 
             // Check if refresh token is not in database.
             if (oldRefreshToken is null)
@@ -52,11 +55,11 @@ namespace RealWorldConduit.Application.Users.Commands
             var authDTO = new AuthDTO
             {
                 AccessToken = newAccessToken,
-                RefreshToken = newRefreshToken.AccessToken
+                RefreshToken = newRefreshToken.Token
             };
 
             // Set the old refresh token with new authDTO response in the cache
-            _cacheService.SetItem<AuthDTO>($"refreshTokenResponse-{oldRefreshToken.AccessToken}", authDTO, TimeSpan.FromSeconds(20));
+            _cacheService.SetItem<AuthDTO>($"refreshTokenResponse-{oldRefreshToken.Token}", authDTO, TimeSpan.FromSeconds(20));
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 

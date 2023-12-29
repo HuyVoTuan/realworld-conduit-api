@@ -1,25 +1,11 @@
-﻿using System.Security.Cryptography;
-
-namespace RealworldConduit.Infrastructure.Helpers
+﻿namespace RealworldConduit.Infrastructure.Helpers
 {
     public class StringHelper
     {
         public static string GenerateSlug(string input)
         {
-            int slugLength = 2;
-
-            byte[] randomBytes = new byte[slugLength];
-
-            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(randomBytes);
-            }
-
-            string randomSlug = BitConverter.ToString(randomBytes).Replace("-", "").ToLower();
-
-            string finalSlug = $"{input}-{randomSlug}";
-
-            return finalSlug;
+            string slug = input.Replace(" ", "-").ToLower();
+            return slug;
         }
 
         public static string GenerateRefreshToken()

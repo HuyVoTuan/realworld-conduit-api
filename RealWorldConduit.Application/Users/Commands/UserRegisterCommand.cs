@@ -29,28 +29,30 @@ namespace RealWorldConduit.Application.Users.Commands
                                     .WithMessage("Invalid username");
 
             RuleFor(x => x.Username).Must(username =>
-                                {
-                                    var isExisted = _dbContext.Users.Any(u => u.Username == username);
-                                    return !isExisted;
-                                }).OverridePropertyName("username")
-                                  .WithMessage("Username already existed");
+                                    {
+                                        var isExisted = _dbContext.Users.Any(u => u.Username == username);
+                                        return !isExisted;
+                                    })
+                                    .OverridePropertyName("username")
+                                    .WithMessage("Username has been taken!");
 
             RuleFor(x => x.Email).NotEmpty()
                                  .EmailAddress()
                                  .OverridePropertyName("email")
-                                 .WithMessage("Invalid email");
+                                 .WithMessage("Invalid email!");
 
-            RuleFor(x => x.Email).Must(mail =>
+            RuleFor(x => x.Email).Must(email =>
                                  {
-                                     var isExisted = _dbContext.Users.Any(u => u.Email == mail);
+                                     var isExisted = _dbContext.Users.Any(u => u.Email == email);
                                      return !isExisted;
-                                 }).OverridePropertyName("email")
-                                   .WithMessage("Email already existed");
+                                 })
+                                 .OverridePropertyName("email")
+                                 .WithMessage("Email has been taken!");
 
             RuleFor(x => x.Password).NotEmpty()
                                     .MinimumLength(6)
                                     .OverridePropertyName("password")
-                                    .WithMessage("Invalid password or password must be more than 6 characters");
+                                    .WithMessage("Password must be more than 6 characters");
         }
     }
 
@@ -68,6 +70,7 @@ namespace RealWorldConduit.Application.Users.Commands
         {
             var newUser = new User
             {
+                Slug = StringHelper.GenerateSlug(request.Username),
                 Username = request.Username,
                 Email = request.Email,
                 Password = _authService.HashPassword(request.Password)
@@ -82,11 +85,11 @@ namespace RealWorldConduit.Application.Users.Commands
             return new BaseResponseDTO<AuthDTO>
             {
                 Code = HttpStatusCode.OK,
-                Message = $"Successfully register user {request.Email}",
+                Message = $"User {newUser.Slug} has been successfully registerd",
                 Data = new AuthDTO
                 {
                     AccessToken = _authService.GenerateToken(newUser),
-                    RefreshToken = refreshToken.AccessToken,
+                    RefreshToken = refreshToken.Token,
                 }
             };
         }

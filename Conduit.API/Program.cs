@@ -18,7 +18,7 @@ builder.Services.AddHttpClient();
 builder.Services.ServicesConfiguration()
                 .MediatRConfiguration()
                 .FluentValidationConfiguration()
-                .FluentValidationFilterConfiguration()
+                .MediatRPipelinesConfiguration()
                 .AuthConfiguration(builder.Configuration)
                 .DatabaseConfiguration(builder.Configuration);
 

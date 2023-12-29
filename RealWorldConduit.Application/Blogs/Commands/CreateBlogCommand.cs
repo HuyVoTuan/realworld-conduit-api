@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RealworldConduit.Infrastructure.Common;
 using RealworldConduit.Infrastructure.Helpers;
-using RealWorldConduit.Application.Articles.DTOs;
-using RealWorldConduit.Application.Users.DTOs;
+using RealWorldConduit.Application.Blogs.DTOs;
 using RealWorldConduit.Domain.Entities;
 using RealWorldConduit.Infrastructure;
 using RealWorldConduit.Infrastructure.Auth;
@@ -11,7 +10,7 @@ using System.Net;
 
 namespace RealWorldConduit.Application.Blogs.Commands
 {
-    public class CreateBlogCommand : IRequestWithBaseResponse<BlogDTO>
+    public class CreateBlogCommand : IRequestWithBaseResponse<MinimalBlogDTO>
     {
         // TODO : Implement Validation Later
         public string Title { get; set; }
@@ -20,7 +19,7 @@ namespace RealWorldConduit.Application.Blogs.Commands
         public List<string> TagList { get; set; }
     };
 
-    internal class CreateBlogCommandHandler : IRequestWithBaseResponseHandler<CreateBlogCommand, BlogDTO>
+    internal class CreateBlogCommandHandler : IRequestWithBaseResponseHandler<CreateBlogCommand, MinimalBlogDTO>
     {
         private readonly MainDbContext _dbContext;
         private readonly ICurrentUser _currentUser;
@@ -30,89 +29,74 @@ namespace RealWorldConduit.Application.Blogs.Commands
             _dbContext = dbContext;
             _currentUser = currentUser;
         }
-        public async Task<BaseResponseDTO<BlogDTO>> Handle(CreateBlogCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponseDTO<MinimalBlogDTO>> Handle(CreateBlogCommand request, CancellationToken cancellationToken)
         {
-            var requestFilteredTags = await RequestTagsFilter(request, cancellationToken);
+            var isBlogExisted = await _dbContext.Blogs
+                                     .AnyAsync(x => x.Title.Equals(request.Title), cancellationToken);
 
-            var blog = await _dbContext.Blogs.FirstOrDefaultAsync(x => x.Title.Equals(request.Title), cancellationToken);
-
-            var author = await _dbContext.Users.AsNoTracking()
-                                               .Where(u => u.Id == _currentUser.Id)
-                                               .Select(u => new ProfileDTO
-                                               {
-                                                  Username = u.Username,
-                                                  Email = u.Email,
-                                                  Bio = u.Bio,
-                                                  ProfileImage = u.ProfileImage,
-                                                  Following = u.FollowedUsers.Any(f => f.FollowerId == _currentUser.Id)
-                                               }).FirstOrDefaultAsync(cancellationToken);
-
-            if (blog is not null)
+            if (isBlogExisted)
             {
-                throw new RestException(HttpStatusCode.NotFound, $"A blog with {request.Title} title is existed!");
+                throw new RestException(HttpStatusCode.NotFound, $"{request.Title} title has been taken!");
             }
 
-            blog = new Blog
+            var newBlog = new Blog
             {
+                Slug = StringHelper.GenerateSlug(request.Title),
                 Title = request.Title,
                 Description = request.Description,
                 Content = request.Content,
-                AuthorId = (Guid)_currentUser.Id,
+                AuthorId = _currentUser.Id.Value,
             };
 
-            _dbContext.Blogs.Add(blog);
+            _dbContext.Blogs.Add(newBlog);
 
-            // Add range to BlogTags based on filterd tags
-            _dbContext.BlogsTag.AddRange(requestFilteredTags.Select(tag => new BlogTag { Blog = blog, Tag = tag }));
+            // Add range to BlogTags based on filtered tags
+            var requestFilteredTags = await RequestTagsFilter(request, cancellationToken);
+            _dbContext.BlogsTag.AddRange(requestFilteredTags.Select(tag => new BlogTag { Blog = newBlog, Tag = tag }));
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            var blogDTO = new BlogDTO
+            var blogDTO = new MinimalBlogDTO
             {
-                Title = blog.Title,
-                Description = blog.Description,
-                Content = blog.Content,
-                TagList = blog.BlogTags.Select(x => x.Tag.Name).ToList(),
-                CreatedAt = blog.CreatedAt,
-                LastUpdatedAt = blog.LastUpdatedAt,
-                Profile = author,
-                Favorited = blog.FavoriteBlogs?.Any(x => x.FavoritedById == _currentUser.Id) ?? false,
-                FavoritesCount = blog.FavoriteBlogs?.Count() ?? 0,
+                Slug = newBlog.Slug,
+                Title = newBlog.Title,
+                Description = newBlog.Description,
+                Content = newBlog.Content,
+                TagList = newBlog.BlogTags.Select(x => x.Tag.Name).ToList(),
+                CreatedAt = newBlog.CreatedAt,
+                LastUpdatedAt = newBlog.LastUpdatedAt,
+                IsFavorited = false,
+                FavoritesCount = 0,
             };
 
-            return new BaseResponseDTO<BlogDTO>
+            return new BaseResponseDTO<MinimalBlogDTO>
             {
                 Code = HttpStatusCode.OK,
-                Message = $"Successfully create new {blogDTO.Title} blog",
+                Message = $"Successfully created a new {blogDTO.Slug} blog",
                 Data = blogDTO
             };
         }
 
         private async Task<List<Tag>> RequestTagsFilter(CreateBlogCommand request, CancellationToken cancellationToken)
         {
-            var tags = new List<Tag>();
             var processedRequestTags = request.TagList.Distinct().ToList();
 
-            // Check if processed request tag is null
-            foreach (var tag in (processedRequestTags ?? Enumerable.Empty<string>()))
-            {
-                var t = await _dbContext.Tags.FirstOrDefaultAsync(x => x.Name.Equals(tag), cancellationToken);
+            var existingTags = await _dbContext.Tags
+                                    .Where(x => processedRequestTags.Contains(x.Name))
+                                    .ToListAsync(cancellationToken);
 
-                if (t is null)
-                {
-                    t = new Tag
-                    {
-                        Name = tag,
-                    };
+            var newTags = processedRequestTags
+                         .Except(existingTags.Select(t => t.Name))
+                         .Select(tag => new Tag { Name = tag })
+                         .ToList();
 
-                    _dbContext.Tags.Add(t);
+            _dbContext.Tags.AddRange(newTags);
 
-                    // Save for later on reusability
-                    await _dbContext.SaveChangesAsync(cancellationToken);
-                }
-                tags.Add(t);
-            }
-            return tags;
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            var allTags = existingTags.Concat(newTags).ToList();
+
+            return allTags;
         }
     }
 }

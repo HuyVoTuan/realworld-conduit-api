@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RealworldConduit.Infrastructure.Common;
-using RealWorldConduit.Application.Articles.DTOs;
-using RealWorldConduit.Application.Users.DTOs;
+using RealworldConduit.Infrastructure.Helpers;
+using RealWorldConduit.Application.Blogs.DTOs;
 using RealWorldConduit.Infrastructure;
 using RealWorldConduit.Infrastructure.Auth;
 using RealWorldConduit.Infrastructure.Common;
@@ -9,15 +9,16 @@ using System.Net;
 
 namespace RealWorldConduit.Application.Blogs.Commands
 {
-    public class UpdateCurrentBlogCommand : IRequestWithBaseResponse<BlogDTO>
+    public class UpdateCurrentBlogCommand : IRequestWithBaseResponse<MinimalBlogDTO>
     {
         // TODO : Implement Validation Later
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string Content { get; set; }
+        public string Slug { get; init; }
+        public string Title { get; init; }
+        public string Description { get; init; }
+        public string Content { get; init; }
     }
 
-    internal class UpdateBlogCommandHandler : IRequestWithBaseResponseHandler<UpdateCurrentBlogCommand, BlogDTO>
+    internal class UpdateBlogCommandHandler : IRequestWithBaseResponseHandler<UpdateCurrentBlogCommand, MinimalBlogDTO>
     {
         private readonly MainDbContext _dbContext;
         private readonly ICurrentUser _currentUser;
@@ -28,49 +29,43 @@ namespace RealWorldConduit.Application.Blogs.Commands
             _currentUser = currentUser;
         }
 
-        public async Task<BaseResponseDTO<BlogDTO>> Handle(UpdateCurrentBlogCommand request, CancellationToken cancellationToken)
+        public async Task<BaseResponseDTO<MinimalBlogDTO>> Handle(UpdateCurrentBlogCommand request, CancellationToken cancellationToken)
         {
-            var oldBlog = await _dbContext.Blogs.FirstOrDefaultAsync(x => x.Title.Equals(request.Title) && x.AuthorId == _currentUser.Id, cancellationToken);
-           
+            var oldBlog = await _dbContext.Blogs
+                                .FirstOrDefaultAsync(x => x.Slug.Equals(request.Slug) && x.AuthorId == _currentUser.Id, cancellationToken);
+
             if (oldBlog is null)
             {
-                throw new RestException(HttpStatusCode.NotFound, $"A blog with {request.Title} title is not found!");
+                throw new RestException(HttpStatusCode.NotFound, $"{request.Slug} blog is not found!");
             }
 
+            oldBlog.Slug = StringHelper.GenerateSlug(request.Title);
             oldBlog.Title = request.Title;
             oldBlog.Description = request.Description;
             oldBlog.Content = request.Content;
 
-            // Implement update tag list later
-            //oldBlog.BlogTags.Select(x => x.Tag.Name).ToList(),
+            // TODO: Implement update tag list later
 
             _dbContext.Blogs.Update(oldBlog);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            var blogDTO = new BlogDTO
+            var blogDTO = new MinimalBlogDTO
             {
+                Slug = oldBlog.Slug,
                 Title = oldBlog.Title,
                 Description = oldBlog.Description,
                 Content = oldBlog.Content,
                 TagList = oldBlog.BlogTags.Select(x => x.Tag.Name).ToList(),
+                IsFavorited = oldBlog.FavoriteBlogs.Any(x => x.FavoritedById == _currentUser.Id),
+                FavoritesCount = oldBlog.FavoriteBlogs.Count(),
                 CreatedAt = oldBlog.CreatedAt,
                 LastUpdatedAt = oldBlog.LastUpdatedAt,
-                Profile = new ProfileDTO
-                {
-                    Username = oldBlog.Author.Username,
-                    Email = oldBlog.Author.Email,
-                    Bio = oldBlog.Author.Bio,
-                    Following = oldBlog.Author.FollowedUsers.Any(x => x.FollowerId == _currentUser.Id),
-                    ProfileImage = oldBlog.Author.ProfileImage
-                },
-                Favorited = oldBlog.FavoriteBlogs.Any(x => x.FavoritedById == _currentUser.Id),
-                FavoritesCount = oldBlog.FavoriteBlogs.Count()
             };
 
-            return new BaseResponseDTO<BlogDTO>
+            return new BaseResponseDTO<MinimalBlogDTO>
             {
                 Code = HttpStatusCode.OK,
-                Message = $"Successfully update {blogDTO.Title} blog",
+                Message = $"{blogDTO.Title} blog has been successfully updated",
                 Data = blogDTO
             };
         }

@@ -47,6 +47,9 @@ namespace RealworldConduit.Infrastructure.Migrations
                     b.Property<DateTime>("LastUpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Slug")
+                        .HasColumnType("text");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -55,6 +58,9 @@ namespace RealworldConduit.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
 
                     b.HasIndex("Title")
                         .IsUnique();
@@ -110,10 +116,6 @@ namespace RealworldConduit.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("AccessToken")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -123,14 +125,18 @@ namespace RealworldConduit.Infrastructure.Migrations
                     b.Property<DateTime>("LastUpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccessToken");
-
                     b.HasIndex("ExpiredDate");
+
+                    b.HasIndex("Token");
 
                     b.HasIndex("UserId");
 
@@ -190,6 +196,9 @@ namespace RealworldConduit.Infrastructure.Migrations
                     b.Property<string>("ProfileImage")
                         .HasColumnType("text");
 
+                    b.Property<string>("Slug")
+                        .HasColumnType("text");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -198,6 +207,9 @@ namespace RealworldConduit.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Slug")
                         .IsUnique();
 
                     b.HasIndex("Username")

@@ -10,7 +10,7 @@ namespace RealWorldConduit.Infrastructure.Auth
     public class AuthService : IAuthService
     {
         private const int ACCESS_TOKEN_LIFE_TIME = 5;
-        private const int REFRESH_TOKEN_LIFE_TIME = ACCESS_TOKEN_LIFE_TIME * 120;
+        private const int REFRESH_TOKEN_LIFE_TIME = ACCESS_TOKEN_LIFE_TIME * 12;
         private readonly IConfiguration _configuration;
 
         public AuthService(IConfiguration configuration)
@@ -25,7 +25,7 @@ namespace RealWorldConduit.Infrastructure.Auth
             return new RefreshToken
             {
                 UserId = user.Id,
-                AccessToken = uniqueRandomString,
+                Token = uniqueRandomString,
                 ExpiredDate = DateTime.UtcNow.AddMinutes(REFRESH_TOKEN_LIFE_TIME),
             };
         }
