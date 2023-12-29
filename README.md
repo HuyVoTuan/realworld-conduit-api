@@ -1,2 +1,2 @@
-# realword-conduit
-Recreate a real world conduit project using clean architecture
+# realworld-conduit-api
+A practice to clone realword conduit project API
